@@ -1,28 +1,29 @@
 import httplib, urllib, sys, webbrowser, os
 from optparse import OptionParser
-#import pygtk
-#pygtk.require('2.0')
-#import gtk
+import pygtk
+pygtk.require('2.0')
+import gtk
 
 # Verification des arguments
 parser = OptionParser()
 parser.add_option("-f", "--file", dest="filename",
-                  help="file to be paste on rafb.net", metavar="FILE")
+                  help="file to be paste on rafb.net, if no file is precised then the script use the data in the clipboard", metavar="FILE")
+parser.add_option("-t", "--type", dest="type",
+                  help="type of paste on rafb.net", metavar="TYPE")
 (options, args) = parser.parse_args()
 
+type = options.type
+if options.type == None:
+	type = "C++"
+
 if options.filename == None:
-	print "Aucun fichier en entree"
-	exit(0)
-
-
-# Lecture du fichier a paster
-#clipboard = gtk.clipboard_get()
-#text = clipboard.wait_for_text()
-#print text
-ofi = open(options.filename, 'r')
-buffer = ofi.read()
-
-type = "C++"
+	# Lecture du clipboard
+	clipboard = gtk.clipboard_get()
+	buffer = clipboard.wait_for_text()
+else:
+	# Lecture du fichier a paster
+	ofi = open(options.filename, 'r')
+	buffer = ofi.read()
 
 # Parametrage selon le formulaire distant
 params = urllib.urlencode({'lang': type, 'text': buffer})
